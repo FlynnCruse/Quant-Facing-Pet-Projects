@@ -1,19 +1,39 @@
 # Market Data Dissemination Simulator
 
-A client-server application demonstrating middleware concepts and distributed asynchronous systems using gRPC for real-time market data streaming, with a modern web frontend.
+**I built this project in an afternoon for learning purposes and to demonstrate my technical skills in distributed systems and financial market data visualization. It features a C# backend generating simulated market data, Node.js middleware for data distribution via gRPC, and a modern Next.js frontend showcasing interactive orderbooks, candlestick price charts, and market depth visualization.**
+
+A sophisticated client-server application demonstrating middleware concepts and distributed asynchronous systems using gRPC for real-time market data streaming, with a responsive, data-rich web frontend.
 
 ## Project Overview
 
-This project simulates a market data system where:
+This project simulates a professional-grade market data system where:
 
 1. **Server**: Manages order books for different financial instruments and disseminates market data
 2. **Client**: Connects to the server and subscribes to receive real-time market data updates
-3. **Web Frontend**: Visualizes the orderbook data in a modern UI
+3. **Web Frontend**: Visualizes the orderbook data with dynamic, interactive charts
 
-The communication is implemented using gRPC with bidirectional streaming, allowing clients to:
+The communication is implemented using industry-standard gRPC with bidirectional streaming, allowing clients to:
 - Subscribe/unsubscribe to specific instruments
 - Receive full order book snapshots upon subscription
 - Receive incremental updates to maintain order book state
+
+## Screenshots
+
+### Orderbook View
+![Orderbook View](./frontend-orderbooks.png)
+*Real-time orderbook displaying bid/ask prices and quantities for multiple instruments*
+
+### Price Chart and Depth Chart
+![Price and Depth Charts](./frontend-price-and-depth-chart.png)
+*Interactive price history with candlestick chart (top) and market depth visualization (bottom)*
+
+## Video Demonstration
+
+A video walkthrough of the application in action is available:
+
+[Frontend Demonstration Video](./Frontend-Demonstration.mp4)
+
+*This demonstration shows the real-time functionality of the orderbook updates, interactive price charts, and market depth visualization as data streams from the server.*
 
 ## Architecture
 
@@ -37,9 +57,13 @@ The communication is implemented using gRPC with bidirectional streaming, allowi
 - Acts as a bridge between the C# server and web frontend
 
 ### Web Frontend (Next.js)
-- Modern, responsive UI for orderbook visualization
+- Modern, responsive UI for financial data visualization
 - Connects to the API server via WebSocket
-- Displays real-time orderbook updates
+- Displays real-time orderbook, price, and depth chart updates
+- Features multiple visualization components:
+  - Orderbook with bid/ask prices and quantities
+  - Candlestick chart with moving averages
+  - Depth chart showing cumulative volume at price levels
 - Allows subscribing/unsubscribing to different instruments
 
 ## Protocol
@@ -90,7 +114,7 @@ dotnet run --project Server
 
 ```bash
 cd api
-npm start
+node index.js
 ```
 
 ### Next.js Frontend:
@@ -117,11 +141,7 @@ In the client console, use the following commands:
 1. Open [http://localhost:3000](http://localhost:3000) in your browser
 2. Click the "Subscribe" button for any instrument
 3. Watch real-time orderbook updates
-4. Click "Unsubscribe" to stop receiving updates
-
-## Screenshots
-
-![Web Frontend Screenshot](./frontend-screenshot.png)
+4. Use the tabs to switch between orderbook, price chart, and depth chart views
 
 ## Project Structure Explanation
 
@@ -145,11 +165,14 @@ MarketDataDissemination/
 │       └── orderbook.proto   # gRPC service definition
 ├── api/                      # Node.js API server
 │   ├── index.js              # API server implementation
+│   ├── historyData.js        # Price history data generator
 │   └── package.json          # Node.js dependencies
 └── frontend/                 # Next.js Web Frontend
     ├── app/                  # Next.js app components
     │   ├── components/       # React components
-    │   │   └── Orderbook.tsx # Orderbook visualization 
+    │   │   ├── Orderbook.tsx # Orderbook visualization 
+    │   │   ├── CandlestickChart.tsx # Price chart visualization
+    │   │   └── DepthChart.tsx # Market depth visualization
     │   ├── page.tsx          # Main page component
     │   └── globals.css       # Global styles
     └── package.json          # Node.js dependencies
@@ -160,6 +183,7 @@ MarketDataDissemination/
 1. **Client-Server Architecture**:
    - Clear separation of responsibilities
    - Bidirectional communication
+   - Real-time data streaming
 
 2. **Middleware Understanding**:
    - gRPC for service definition and communication
@@ -171,27 +195,46 @@ MarketDataDissemination/
    - Snapshot and incremental update pattern
    - Subscription-based data dissemination
    - Asynchronous communication
+   - Event-driven architecture
 
 4. **Frontend Development**:
    - Modern React with Next.js
-   - Real-time data visualization
-   - WebSocket communication
+   - Interactive data visualization
+   - WebSocket real-time communication
    - Responsive UI design
+   - Component-based architecture
 
 5. **Real-world Market Data Concepts**:
-   - Order book management
-   - Bid/ask price levels
-   - Trade simulation
+   - Order book management and visualization
+   - Bid/ask price level representation
+   - Price chart with OHLC (Open, High, Low, Close) data
+   - Market depth visualization
+   - Simple Moving Average (SMA) calculation
+   - Cumulative volume calculation
 
 ## Learning Outcomes
 
-Building this project helps demonstrate understanding of:
+Building this project demonstrates proficiency in:
 
-1. How to design and implement cross-service communication
-2. Real-time data streaming architecture patterns
-3. Distributed system design and implementation
-4. Market data structures and dissemination techniques
-5. Modern web frontend development
-6. Full-stack development with multiple technologies
+1. Designing and implementing cross-service communication in a microservices architecture
+2. Real-time data streaming using industry-standard protocols
+3. Distributed system design and implementation for financial data
+4. Market data structures and visualization techniques
+5. Modern web frontend development with React and Next.js
+6. Full-stack development across multiple technology stacks (C#, Node.js, TypeScript)
+7. **Programming with Generative AI as a force-multiplier for development productivity**
+8. **Rapidly learning and implementing new technologies through AI-augmented workflows**
+9. **Leveraging AI tools to expand technical capabilities and accelerate development cycles**
 
-This project serves as a foundation that can be extended with additional features to demonstrate more advanced concepts in distributed systems and financial technology.
+This project exemplifies practical implementation of financial technology concepts and serves as a foundation for more advanced trading systems, algorithmic trading strategies, or market analysis tools.
+
+## AI-Augmented Development Philosophy
+
+This project embraces the modern development paradigm where AI and human creativity work in tandem. Some key insights from this approach:
+
+- **Humans shouldn't code alone**: The combination of human domain knowledge and AI capabilities creates exponentially better outcomes than either working in isolation
+- **Accelerated skill acquisition**: AI tools enable developers to quickly master unfamiliar technologies and implement solutions in domains outside their primary expertise
+- **Focus on architecture and design**: With AI handling routine coding tasks, human developers can concentrate on high-level system design, architectural decisions, and user experience
+- **Continuous learning**: Working with AI tools instills a cycle of constant learning and adaptation to new techniques, frameworks, and patterns
+
+The future of software development lies not in resisting AI tools but in learning to collaborate with them effectively, transforming how we approach problem-solving and implementation.
