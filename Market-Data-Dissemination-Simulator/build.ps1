@@ -1,0 +1,94 @@
+# Clean previous build artifacts
+Write-Host "Cleaning build artifacts..."
+Remove-Item -Recurse -Force -ErrorAction SilentlyContinue Client\bin, Client\obj, Server\bin, Server\obj
+
+# Update orderbook.proto
+Write-Host "Updating proto file..."
+$protoContent = @"
+syntax = "proto3";
+
+option csharp_namespace = "Proto";
+
+package MarketData;
+
+// Subscription message containing both subscribe and unsubscribe requests
+message Subscription {
+  SubscribeRequest Subscribe = 1;
+  UnsubscribeRequest Unsubscribe = 2;
+}
+
+// Subscribe request containing instrument IDs to subscribe to
+message SubscribeRequest {
+  repeated int32 Ids = 1;
+}
+
+// Unsubscribe request containing instrument IDs to unsubscribe from
+message UnsubscribeRequest {
+  repeated int32 Ids = 2;
+}
+
+// Represents a price level in the order book
+message OrderbookLevel {
+  int32 Price = 1;
+  bool IsBuy = 2;
+  uint32 Quantity = 3;
+}
+
+// Types of updates that can happen to an order book level
+enum OrderbookLevelUpdateType {
+  Invalid = 0;
+  Add = 1;
+  Replace = 2;
+  Remove = 3;
+}
+
+// Represents an update to a single level of the order book
+message OrderbookLevelUpdate {
+  OrderbookLevelUpdateType UpdateType = 1;
+  OrderbookLevel Level = 2;
+}
+
+// Complete snapshot of an order book
+message OrderbookSnapshotUpdate {
+  repeated OrderbookLevelUpdate Bids = 1;
+  repeated OrderbookLevelUpdate Asks = 2;
+}
+
+// Incremental update to an order book
+message OrderbookIncrementalUpdate {
+  OrderbookLevelUpdate Update = 1;
+}
+
+// Wrapper message for any type of order book update
+message OrderbookUpdate {
+  int32 InstrumentId = 1;
+  oneof Update {
+    OrderbookSnapshotUpdate Snapshot = 2;
+    OrderbookIncrementalUpdate Incremental = 3;
+  }
+}
+
+// Service definition for the order book service
+service OrderbookService {
+  // Bidirectional streaming RPC for order book updates
+  rpc StreamOrderbookUpdates (stream Subscription) returns (stream OrderbookUpdate);
+}
+"@
+Set-Content -Path "Shared\Proto\orderbook.proto" -Value $protoContent
+
+# Create solution file if it doesn't exist
+If (-not(Test-Path "MarketDataDissemination.sln")) {
+    Write-Host "Creating solution file..."
+    dotnet new sln -n MarketDataDissemination
+    dotnet sln add Server\Server.csproj
+    dotnet sln add Client\Client.csproj
+}
+
+# Build the projects
+Write-Host "Building projects..."
+dotnet restore
+dotnet build
+
+Write-Host "Build completed. You can now run the server and client separately:"
+Write-Host "Server: dotnet run --project Server"
+Write-Host "Client: dotnet run --project Client" 
