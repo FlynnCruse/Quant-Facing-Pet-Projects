@@ -4,3 +4,5 @@ Pet Projects #1 way to get in. Show passion for quant and coding!
 https://www.youtube.com/watch?v=lY-NP4X455U
 - Binomial option pricer
 - various pricing models for options.
+
+

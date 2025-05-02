@@ -120,6 +120,17 @@ const Orderbook: React.FC<OrderbookProps> = ({ instrumentId, symbol, depth }) =>
         </div>
       )}
 
+      {isSubscribed && (
+        <div className="bg-gray-800/50 p-2 rounded mb-4 text-xs text-gray-300">
+          <p><span className="font-semibold">Market details:</span> {symbol} orderbook with max depth of {depth} levels</p>
+          {bids.length > 0 && asks.length > 0 && (
+            <p className="mt-1">
+              <span className="font-semibold">Current spread:</span> {(Math.min(...asks.map(a => a.price)) - Math.max(...bids.map(b => b.price))).toFixed(2)} points
+            </p>
+          )}
+        </div>
+      )}
+      
       <div className="grid grid-cols-2 gap-4">
         {/* Asks (Sell orders) */}
         <div className="col-span-1">
