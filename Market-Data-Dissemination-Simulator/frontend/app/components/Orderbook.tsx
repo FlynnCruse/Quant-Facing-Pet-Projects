@@ -2,6 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import dynamic from 'next/dynamic';
+
+// Dynamically import charts to avoid SSR issues
+const CandlestickChart = dynamic(() => import('./CandlestickChart'), { ssr: false });
+const DepthChart = dynamic(() => import('./DepthChart'), { ssr: false });
 
 type OrderbookLevel = {
   price: number;
@@ -22,6 +27,7 @@ const Orderbook: React.FC<OrderbookProps> = ({ instrumentId, symbol, depth }) =>
   const [isConnected, setIsConnected] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [socket, setSocket] = useState<WebSocket | null>(null);
+  const [activeTab, setActiveTab] = useState<'orderbook' | 'chart' | 'depth'>('orderbook');
 
   // Initialize WebSocket connection
   useEffect(() => {
@@ -36,14 +42,11 @@ const Orderbook: React.FC<OrderbookProps> = ({ instrumentId, symbol, depth }) =>
       try {
         const data = JSON.parse(event.data);
         if (data.instrumentId === instrumentId) {
-          if (data.type === 'snapshot') {
+          if (data.type === 'orderbook') {
             setBids(data.data.bids);
             setAsks(data.data.asks);
-          } else if (data.type === 'incremental') {
-            // Logic for handling incremental updates would go here
-            // For simplicity, we're just using snapshots in this implementation
+            setLastUpdate(new Date());
           }
-          setLastUpdate(new Date());
         }
       } catch (error) {
         console.error('Error processing WebSocket message:', error);
@@ -74,7 +77,7 @@ const Orderbook: React.FC<OrderbookProps> = ({ instrumentId, symbol, depth }) =>
 
     if (isSubscribed) {
       socket.send(JSON.stringify({
-        action: 'unsubscribe',
+        type: 'unsubscribe',
         instrumentId
       }));
       setBids([]);
@@ -82,7 +85,7 @@ const Orderbook: React.FC<OrderbookProps> = ({ instrumentId, symbol, depth }) =>
       setIsSubscribed(false);
     } else {
       socket.send(JSON.stringify({
-        action: 'subscribe',
+        type: 'subscribe',
         instrumentId
       }));
       setIsSubscribed(true);
@@ -102,7 +105,7 @@ const Orderbook: React.FC<OrderbookProps> = ({ instrumentId, symbol, depth }) =>
   return (
     <div className="bg-gray-900 text-white p-4 rounded-lg shadow-xl">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">{symbol} Orderbook</h2>
+        <h2 className="text-xl font-bold">{symbol}</h2>
         <div className="flex items-center space-x-4">
           <div className={`rounded-full h-3 w-3 ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
           <button
@@ -131,62 +134,111 @@ const Orderbook: React.FC<OrderbookProps> = ({ instrumentId, symbol, depth }) =>
         </div>
       )}
       
-      <div className="grid grid-cols-2 gap-4">
-        {/* Asks (Sell orders) */}
-        <div className="col-span-1">
-          <div className="bg-gray-800 p-2 rounded mb-2">
-            <h3 className="text-center text-red-400">Asks (Sell)</h3>
-          </div>
-          <div className="overflow-hidden">
-            <div className="grid grid-cols-2 text-sm font-bold pb-1 border-b border-gray-700">
-              <div className="text-left">Price</div>
-              <div className="text-right">Quantity</div>
+      {/* Tabs */}
+      <div className="flex border-b border-gray-700 mb-4">
+        <button
+          onClick={() => setActiveTab('orderbook')}
+          className={`py-2 px-4 text-sm font-medium ${activeTab === 'orderbook' 
+            ? 'text-blue-400 border-b-2 border-blue-400' 
+            : 'text-gray-400 hover:text-gray-300'}`}
+        >
+          Orderbook
+        </button>
+        <button
+          onClick={() => setActiveTab('chart')}
+          className={`py-2 px-4 text-sm font-medium ${activeTab === 'chart' 
+            ? 'text-blue-400 border-b-2 border-blue-400' 
+            : 'text-gray-400 hover:text-gray-300'}`}
+        >
+          Price Chart
+        </button>
+        <button
+          onClick={() => setActiveTab('depth')}
+          className={`py-2 px-4 text-sm font-medium ${activeTab === 'depth' 
+            ? 'text-blue-400 border-b-2 border-blue-400' 
+            : 'text-gray-400 hover:text-gray-300'}`}
+        >
+          Depth Chart
+        </button>
+      </div>
+      
+      {/* Tab content */}
+      <div className="mb-4">
+        {activeTab === 'orderbook' && (
+          <div className="grid grid-cols-2 gap-4">
+            {/* Asks (Sell orders) */}
+            <div className="col-span-1">
+              <div className="bg-gray-800 p-2 rounded mb-2">
+                <h3 className="text-center text-red-400">Asks (Sell)</h3>
+              </div>
+              <div className="overflow-hidden">
+                <div className="grid grid-cols-2 text-sm font-bold pb-1 border-b border-gray-700">
+                  <div className="text-left">Price</div>
+                  <div className="text-right">Quantity</div>
+                </div>
+                <AnimatePresence>
+                  {asks.slice(0, depth).map((level, index) => (
+                    <motion.div
+                      key={`ask-${level.price}`}
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="grid grid-cols-2 text-sm py-1 border-b border-gray-800"
+                    >
+                      <div className="text-left text-red-400">{formatPrice(level.price)}</div>
+                      <div className="text-right">{formatQuantity(level.quantity)}</div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
             </div>
-            <AnimatePresence>
-              {asks.slice(0, depth).map((level, index) => (
-                <motion.div
-                  key={`ask-${level.price}`}
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="grid grid-cols-2 text-sm py-1 border-b border-gray-800"
-                >
-                  <div className="text-left text-red-400">{formatPrice(level.price)}</div>
-                  <div className="text-right">{formatQuantity(level.quantity)}</div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-        </div>
 
-        {/* Bids (Buy orders) */}
-        <div className="col-span-1">
-          <div className="bg-gray-800 p-2 rounded mb-2">
-            <h3 className="text-center text-green-400">Bids (Buy)</h3>
-          </div>
-          <div className="overflow-hidden">
-            <div className="grid grid-cols-2 text-sm font-bold pb-1 border-b border-gray-700">
-              <div className="text-left">Price</div>
-              <div className="text-right">Quantity</div>
+            {/* Bids (Buy orders) */}
+            <div className="col-span-1">
+              <div className="bg-gray-800 p-2 rounded mb-2">
+                <h3 className="text-center text-green-400">Bids (Buy)</h3>
+              </div>
+              <div className="overflow-hidden">
+                <div className="grid grid-cols-2 text-sm font-bold pb-1 border-b border-gray-700">
+                  <div className="text-left">Price</div>
+                  <div className="text-right">Quantity</div>
+                </div>
+                <AnimatePresence>
+                  {bids.slice(0, depth).map((level, index) => (
+                    <motion.div
+                      key={`bid-${level.price}`}
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="grid grid-cols-2 text-sm py-1 border-b border-gray-800"
+                    >
+                      <div className="text-left text-green-400">{formatPrice(level.price)}</div>
+                      <div className="text-right">{formatQuantity(level.quantity)}</div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
             </div>
-            <AnimatePresence>
-              {bids.slice(0, depth).map((level, index) => (
-                <motion.div
-                  key={`bid-${level.price}`}
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="grid grid-cols-2 text-sm py-1 border-b border-gray-800"
-                >
-                  <div className="text-left text-green-400">{formatPrice(level.price)}</div>
-                  <div className="text-right">{formatQuantity(level.quantity)}</div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
           </div>
-        </div>
+        )}
+        
+        {activeTab === 'chart' && (
+          <CandlestickChart 
+            instrumentId={instrumentId} 
+            symbol={symbol} 
+            isSubscribed={isSubscribed} 
+          />
+        )}
+        
+        {activeTab === 'depth' && (
+          <DepthChart 
+            instrumentId={instrumentId} 
+            symbol={symbol} 
+            isSubscribed={isSubscribed} 
+          />
+        )}
       </div>
     </div>
   );

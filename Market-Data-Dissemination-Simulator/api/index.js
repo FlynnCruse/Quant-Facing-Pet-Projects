@@ -3,6 +3,13 @@ const cors = require('cors');
 const axios = require('axios');
 const http = require('http');
 const WebSocket = require('ws');
+const { 
+  priceHistory, 
+  depthData, 
+  addCandleToHistory, 
+  updateDepthData, 
+  getMidPrice 
+} = require('./historyData');
 
 const app = express();
 const port = 3001;
@@ -11,20 +18,26 @@ const port = 3001;
 app.use(cors());
 app.use(express.json());
 
-// In-memory storage for orderbook data
-const orderbooks = {
+// Instruments data
+const instruments = {
+  1: { id: 1, symbol: 'AAPL', name: 'Apple Inc.', levels: 10 },
+  2: { id: 2, symbol: 'MSFT', name: 'Microsoft Corporation', levels: 5 },
+};
+
+// Active subscriptions
+const subscriptions = {};
+
+// Orderbook data (simulated)
+let orderbooks = {
   1: { // AAPL
     bids: [],
-    asks: []
+    asks: [],
   },
   2: { // MSFT
     bids: [],
-    asks: []
+    asks: [],
   }
 };
-
-// Subscribed instruments
-const subscriptions = new Set();
 
 // Create HTTP server
 const server = http.createServer(app);
@@ -32,212 +45,205 @@ const server = http.createServer(app);
 // Initialize WebSocket server
 const wss = new WebSocket.Server({ server });
 
-// WebSocket connection handler
-wss.on('connection', (ws) => {
-  console.log('Client connected to WebSocket');
+// Generate random order book data
+function generateOrderBook(instrumentId) {
+  const instrument = instruments[instrumentId];
+  if (!instrument) return null;
   
-  // Send initial orderbook state for all subscribed instruments
-  for (const instrumentId of subscriptions) {
-    ws.send(JSON.stringify({
-      type: 'snapshot',
-      instrumentId,
-      data: orderbooks[instrumentId]
-    }));
+  const basePrice = instrumentId === 1 ? 150 : 350; // AAPL ~150, MSFT ~350
+  const bids = [];
+  const asks = [];
+  
+  // Generate bids (slightly below base price)
+  for (let i = 0; i < instrument.levels; i++) {
+    const priceDelta = ((i + 1) * 0.1) + (Math.random() * 0.05);
+    const price = basePrice - priceDelta;
+    const quantity = Math.floor(Math.random() * 500) + 100;
+    
+    bids.push({
+      price: Number(price.toFixed(2)),
+      quantity,
+    });
   }
+  
+  // Generate asks (slightly above base price)
+  for (let i = 0; i < instrument.levels; i++) {
+    const priceDelta = ((i + 1) * 0.1) + (Math.random() * 0.05);
+    const price = basePrice + priceDelta;
+    const quantity = Math.floor(Math.random() * 500) + 100;
+    
+    asks.push({
+      price: Number(price.toFixed(2)),
+      quantity,
+    });
+  }
+  
+  // Sort bids (descending) and asks (ascending)
+  bids.sort((a, b) => b.price - a.price);
+  asks.sort((a, b) => a.price - b.price);
+  
+  return { bids, asks };
+}
+
+// Update orderbooks periodically
+function updateOrderBooks() {
+  Object.keys(instruments).forEach(instrumentId => {
+    const id = Number(instrumentId);
+    const orderbook = generateOrderBook(id);
+    
+    if (orderbook) {
+      orderbooks[id] = orderbook;
+      
+      // Update depth data for charts
+      updateDepthData(id, orderbook.bids, orderbook.asks);
+      
+      // Update candle history
+      const midPrice = getMidPrice(orderbook.bids, orderbook.asks);
+      if (midPrice) {
+        addCandleToHistory(id, midPrice);
+      }
+      
+      // Send updates to subscribed clients
+      sendOrderBookUpdates(id);
+    }
+  });
+}
+
+// Send orderbook updates to subscribed clients
+function sendOrderBookUpdates(instrumentId) {
+  const orderbook = orderbooks[instrumentId];
+  if (!orderbook) return;
+  
+  // Create update message
+  const message = JSON.stringify({
+    type: 'orderbook',
+    instrumentId,
+    symbol: instruments[instrumentId].symbol,
+    data: orderbook
+  });
+  
+  // Send to all subscribed clients
+  if (subscriptions[instrumentId]) {
+    subscriptions[instrumentId].forEach(client => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(message);
+      }
+    });
+  }
+}
+
+// Handle WebSocket connections
+wss.on('connection', (ws) => {
+  console.log('Client connected');
   
   // Handle client messages
   ws.on('message', (message) => {
     try {
       const data = JSON.parse(message);
       
-      if (data.action === 'subscribe') {
-        // Simulate subscribing to an instrument
-        subscribeToInstrument(data.instrumentId);
-        // Send current state immediately
-        ws.send(JSON.stringify({
-          type: 'snapshot',
-          instrumentId: data.instrumentId,
-          data: orderbooks[data.instrumentId]
-        }));
-      } else if (data.action === 'unsubscribe') {
-        unsubscribeFromInstrument(data.instrumentId);
+      if (data.type === 'subscribe') {
+        const { instrumentId } = data;
+        
+        // Add client to subscription list
+        if (!subscriptions[instrumentId]) {
+          subscriptions[instrumentId] = new Set();
+        }
+        subscriptions[instrumentId].add(ws);
+        
+        console.log(`Client subscribed to ${instruments[instrumentId]?.symbol}`);
+        
+        // Send initial data
+        const orderbook = orderbooks[instrumentId];
+        if (orderbook) {
+          ws.send(JSON.stringify({
+            type: 'orderbook',
+            instrumentId,
+            symbol: instruments[instrumentId].symbol,
+            data: orderbook
+          }));
+        }
+      } 
+      else if (data.type === 'unsubscribe') {
+        const { instrumentId } = data;
+        
+        // Remove client from subscription list
+        if (subscriptions[instrumentId]) {
+          subscriptions[instrumentId].delete(ws);
+        }
+        
+        console.log(`Client unsubscribed from ${instruments[instrumentId]?.symbol}`);
       }
-    } catch (error) {
-      console.error('Error processing WebSocket message:', error);
+    } catch (err) {
+      console.error('Error processing message:', err);
     }
   });
   
+  // Handle client disconnections
   ws.on('close', () => {
-    console.log('Client disconnected from WebSocket');
+    console.log('Client disconnected');
+    
+    // Remove from all subscriptions
+    Object.values(subscriptions).forEach(clients => {
+      clients.delete(ws);
+    });
   });
+  
+  // Send available instruments
+  ws.send(JSON.stringify({
+    type: 'instruments',
+    data: Object.values(instruments)
+  }));
 });
 
-// Function to subscribe to an instrument
-function subscribeToInstrument(instrumentId) {
-  if (!subscriptions.has(instrumentId)) {
-    console.log(`Subscribing to instrument ${instrumentId}`);
-    subscriptions.add(instrumentId);
-    
-    // Simulate initial snapshot
-    generateRandomOrderbook(instrumentId);
-    
-    // Broadcast to all clients
-    broadcastUpdate('snapshot', instrumentId);
-    
-    // Start sending periodic updates for this instrument
-    setInterval(() => {
-      // 70% chance for incremental update, 30% chance for snapshot
-      const updateType = Math.random() > 0.7 ? 'snapshot' : 'incremental';
-      
-      if (updateType === 'snapshot') {
-        generateRandomOrderbook(instrumentId);
-      } else {
-        updateRandomLevel(instrumentId);
-      }
-      
-      broadcastUpdate(updateType, instrumentId);
-    }, 1000 + Math.random() * 2000); // Random interval between 1-3 seconds
-  }
-}
-
-// Function to unsubscribe from an instrument
-function unsubscribeFromInstrument(instrumentId) {
-  if (subscriptions.has(instrumentId)) {
-    console.log(`Unsubscribing from instrument ${instrumentId}`);
-    subscriptions.delete(instrumentId);
-    
-    // Clear orderbook data
-    orderbooks[instrumentId].bids = [];
-    orderbooks[instrumentId].asks = [];
-    
-    // Broadcast empty snapshot to all clients
-    broadcastUpdate('snapshot', instrumentId);
-  }
-}
-
-// Function to broadcast updates to all connected clients
-function broadcastUpdate(type, instrumentId) {
-  wss.clients.forEach((client) => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(JSON.stringify({
-        type,
-        instrumentId,
-        data: orderbooks[instrumentId]
-      }));
-    }
-  });
-}
-
-// Function to generate a random orderbook
-function generateRandomOrderbook(instrumentId) {
-  const maxLevels = instrumentId === 1 ? 10 : 5; // AAPL: 10 levels, MSFT: 5 levels
-  
-  orderbooks[instrumentId] = {
-    bids: [],
-    asks: []
-  };
-  
-  // Generate random bid levels (sorted descending by price)
-  const baseBidPrice = 100 + Math.random() * 50;
-  for (let i = 0; i < Math.floor(Math.random() * maxLevels) + 1; i++) {
-    orderbooks[instrumentId].bids.push({
-      price: baseBidPrice - (i * (0.5 + Math.random())),
-      quantity: Math.floor(Math.random() * 1000) + 100,
-      isBuy: true
-    });
-  }
-  
-  // Sort bids in descending order
-  orderbooks[instrumentId].bids.sort((a, b) => b.price - a.price);
-  
-  // Generate random ask levels (sorted ascending by price)
-  const baseAskPrice = baseBidPrice + (1 + Math.random() * 2);
-  for (let i = 0; i < Math.floor(Math.random() * maxLevels) + 1; i++) {
-    orderbooks[instrumentId].asks.push({
-      price: baseAskPrice + (i * (0.5 + Math.random())),
-      quantity: Math.floor(Math.random() * 1000) + 100,
-      isBuy: false
-    });
-  }
-  
-  // Sort asks in ascending order
-  orderbooks[instrumentId].asks.sort((a, b) => a.price - b.price);
-}
-
-// Function to update a random level in the orderbook
-function updateRandomLevel(instrumentId) {
-  const orderbook = orderbooks[instrumentId];
-  const side = Math.random() > 0.5 ? 'bids' : 'asks';
-  const levels = orderbook[side];
-  
-  if (levels.length === 0) {
-    // If no levels exist, add a new one
-    const newPrice = side === 'bids' 
-      ? 100 + Math.random() * 50 
-      : 100 + Math.random() * 50 + (1 + Math.random() * 2);
-    
-    levels.push({
-      price: newPrice,
-      quantity: Math.floor(Math.random() * 1000) + 100,
-      isBuy: side === 'bids'
-    });
-  } else {
-    // Choose a random action: add, remove, or replace
-    const action = Math.random();
-    
-    if (action < 0.4 && levels.length > 1) {
-      // Remove a random level
-      const indexToRemove = Math.floor(Math.random() * levels.length);
-      levels.splice(indexToRemove, 1);
-    } else if (action < 0.7) {
-      // Replace a random level's quantity
-      const indexToReplace = Math.floor(Math.random() * levels.length);
-      levels[indexToReplace].quantity = Math.floor(Math.random() * 1000) + 100;
-    } else {
-      // Add a new level
-      const maxLevels = instrumentId === 1 ? 10 : 5;
-      
-      if (levels.length < maxLevels) {
-        const lastPrice = levels[levels.length - 1].price;
-        const newPrice = side === 'bids'
-          ? lastPrice - (0.5 + Math.random())
-          : lastPrice + (0.5 + Math.random());
-        
-        levels.push({
-          price: newPrice,
-          quantity: Math.floor(Math.random() * 1000) + 100,
-          isBuy: side === 'bids'
-        });
-        
-        // Re-sort the levels
-        if (side === 'bids') {
-          levels.sort((a, b) => b.price - a.price);
-        } else {
-          levels.sort((a, b) => a.price - b.price);
-        }
-      }
-    }
-  }
-}
-
-// REST API routes
+// REST API endpoints
 app.get('/api/instruments', (req, res) => {
-  res.json([
-    { id: 1, symbol: 'AAPL', specifications: { depth: 10 } },
-    { id: 2, symbol: 'MSFT', specifications: { depth: 5 } }
-  ]);
+  res.json(Object.values(instruments));
 });
 
 app.get('/api/orderbook/:instrumentId', (req, res) => {
-  const instrumentId = parseInt(req.params.instrumentId);
-  if (orderbooks[instrumentId]) {
-    res.json(orderbooks[instrumentId]);
-  } else {
-    res.status(404).json({ error: 'Instrument not found' });
+  const { instrumentId } = req.params;
+  const orderbook = orderbooks[instrumentId];
+  
+  if (!orderbook) {
+    return res.status(404).json({ error: 'Instrument not found' });
   }
+  
+  res.json(orderbook);
 });
 
+// Chart data endpoints
+app.get('/api/chart/history/:instrumentId', (req, res) => {
+  const { instrumentId } = req.params;
+  const history = priceHistory[instrumentId];
+  
+  if (!history) {
+    return res.status(404).json({ error: 'Price history not found' });
+  }
+  
+  res.json(history);
+});
+
+app.get('/api/chart/depth/:instrumentId', (req, res) => {
+  const { instrumentId } = req.params;
+  const depth = depthData[instrumentId];
+  
+  if (!depth) {
+    return res.status(404).json({ error: 'Depth data not found' });
+  }
+  
+  res.json(depth);
+});
+
+// Initialize orderbooks
+updateOrderBooks();
+
+// Update orderbooks every 1-3 seconds
+setInterval(() => {
+  updateOrderBooks();
+}, Math.floor(Math.random() * 2000) + 1000);
+
 // Start server
-server.listen(port, () => {
-  console.log(`API server running at http://localhost:${port}`);
+const PORT = process.env.PORT || 3001;
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 }); 
