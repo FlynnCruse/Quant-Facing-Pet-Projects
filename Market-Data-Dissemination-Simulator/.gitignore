@@ -11,6 +11,33 @@ dist/
 build/
 *.egg-info/
 
+# .NET build outputs
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+**/Debug/
+**/Release/
+**/x64/
+**/x86/
+**/[Bb]in/
+**/[Oo]bj/
+.vs/
+
+# .NET specific files
+*.cache
+*.AssemblyInfo.cs
+*.AssemblyInfoInputs.cache
+*.sourcelink.json
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
 # Log files
 logs/
 *.log
@@ -31,7 +58,6 @@ yarn-error.log*
 *.swp
 *.swo
 .DS_Store
-.vs/
 
 # Cache directories
 .cache/
@@ -43,7 +69,15 @@ coverage/
 .coverage
 htmlcov/
 
-# Distribution / packaging
-bin/
-lib/
-lib64/
+# Next.js
+.next/
+out/
+
+# Generated helper scripts for macOS
+*.command
+
+# Auto-generated files
+**/.suo
+**/.user
+**/.userosscache
+**/.sln.docstates

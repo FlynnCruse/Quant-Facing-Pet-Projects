@@ -102,23 +102,65 @@ npm install
 
 ## Running the Application
 
-You'll need to run the C# server, Node.js API, and Next.js frontend:
+There are several ways to run the application:
 
-### C# Server:
+### Option 1: Streamlined Launcher (Recommended)
 
+#### For Windows users:
+```bash
+# In Command Prompt
+run.bat
+# or
+run.cmd  # Alternative command file with identical functionality
+
+# In PowerShell
+.\run.bat
+# or
+.\run.cmd
+```
+
+#### For macOS/Linux users (or Git Bash on Windows):
+```bash
+# Make the script executable first
+chmod +x run.sh
+
+# Run the shell script
+./run.sh
+```
+
+#### For any operating system (requires Node.js):
+```bash
+# In PowerShell or Command Prompt
+node start.js
+
+# In Git Bash, Linux or macOS terminal
+./start.js  # If you've made it executable with chmod +x start.js
+# or
+node start.js
+```
+
+These launcher scripts will start all components in the correct order:
+1. C# Server
+2. C# Client
+3. Node.js API Server
+4. Next.js Frontend
+
+### Option 2: Manual Start (Start each component separately)
+
+You'll need to run the C# server, Node.js API, and Next.js frontend in separate terminals:
+
+#### C# Server:
 ```bash
 dotnet run --project Server
 ```
 
-### Node.js API Server:
-
+#### Node.js API Server:
 ```bash
 cd api
 node index.js
 ```
 
-### Next.js Frontend:
-
+#### Next.js Frontend:
 ```bash
 cd frontend
 npm run dev
