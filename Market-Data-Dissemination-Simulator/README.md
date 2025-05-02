@@ -31,7 +31,7 @@ The communication is implemented using industry-standard gRPC with bidirectional
 
 A video walkthrough of the application in action is available:
 
-[Frontend Demonstration Video](./Frontend-Demonstration.mp4)
+[Frontend Demonstration](./frontend-demo.gif)
 
 *This demonstration shows the real-time functionality of the orderbook updates, interactive price charts, and market depth visualization as data streams from the server.*
 
