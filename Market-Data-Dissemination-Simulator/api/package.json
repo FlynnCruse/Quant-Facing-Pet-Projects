@@ -1,0 +1,19 @@
+{
+  "name": "market-data-api",
+  "version": "1.0.0",
+  "description": "API for Market Data Dissemination Simulator",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["market-data", "orderbook", "api"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "ws": "^8.14.2"
+  }
+}

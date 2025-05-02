@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 31, 41, 55;
+  --background-end-rgb: 17, 24, 39;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      rgb(var(--background-start-rgb)),
+      rgb(var(--background-end-rgb))
+    )
+    fixed;
+}
+
+/* Orderbook specific styles */
+.spread-indicator {
+  height: 2px;
+  background: linear-gradient(to right, #4ade80, #f87171);
+  margin: 6px 0;
+}
+
+.orderbook-flash-green {
+  animation: flash-green 0.3s ease-out;
+}
+
+.orderbook-flash-red {
+  animation: flash-red 0.3s ease-out;
+}
+
+@keyframes flash-green {
+  0% { background-color: rgba(74, 222, 128, 0.5); }
+  100% { background-color: transparent; }
+}
+
+@keyframes flash-red {
+  0% { background-color: rgba(248, 113, 113, 0.5); }
+  100% { background-color: transparent; }
+}
