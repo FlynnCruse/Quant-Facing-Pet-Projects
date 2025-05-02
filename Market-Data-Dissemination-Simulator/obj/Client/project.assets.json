@@ -2,7 +2,7 @@
   "version": 3,
   "targets": {
     "net9.0": {
-      "Google.Protobuf/3.21.5": {
+      "Google.Protobuf/3.25.1": {
         "type": "package",
         "compile": {
           "lib/net5.0/Google.Protobuf.dll": {
@@ -15,10 +15,10 @@
           }
         }
       },
-      "Grpc.Core/2.46.5": {
+      "Grpc.Core/2.46.6": {
         "type": "package",
         "dependencies": {
-          "Grpc.Core.Api": "2.46.5",
+          "Grpc.Core.Api": "2.46.6",
           "System.Memory": "4.5.3"
         },
         "compile": {
@@ -54,11 +54,8 @@
           }
         }
       },
-      "Grpc.Core.Api/2.48.0": {
+      "Grpc.Core.Api/2.59.0": {
         "type": "package",
-        "dependencies": {
-          "System.Memory": "4.5.3"
-        },
         "compile": {
           "lib/netstandard2.1/Grpc.Core.Api.dll": {
             "related": ".pdb;.xml"
@@ -70,57 +67,60 @@
           }
         }
       },
-      "Grpc.Net.Client/2.48.0": {
+      "Grpc.Net.Client/2.59.0": {
         "type": "package",
         "dependencies": {
-          "Grpc.Net.Common": "2.48.0",
-          "Microsoft.Extensions.Logging.Abstractions": "3.0.3"
+          "Grpc.Net.Common": "2.59.0",
+          "Microsoft.Extensions.Logging.Abstractions": "6.0.0"
         },
         "compile": {
-          "lib/net6.0/Grpc.Net.Client.dll": {
+          "lib/net8.0/Grpc.Net.Client.dll": {
             "related": ".pdb;.xml"
           }
         },
         "runtime": {
-          "lib/net6.0/Grpc.Net.Client.dll": {
+          "lib/net8.0/Grpc.Net.Client.dll": {
             "related": ".pdb;.xml"
           }
         }
       },
-      "Grpc.Net.Common/2.48.0": {
+      "Grpc.Net.Common/2.59.0": {
         "type": "package",
         "dependencies": {
-          "Grpc.Core.Api": "2.48.0"
+          "Grpc.Core.Api": "2.59.0"
         },
         "compile": {
-          "lib/net6.0/Grpc.Net.Common.dll": {
+          "lib/net8.0/Grpc.Net.Common.dll": {
             "related": ".pdb;.xml"
           }
         },
         "runtime": {
-          "lib/net6.0/Grpc.Net.Common.dll": {
+          "lib/net8.0/Grpc.Net.Common.dll": {
             "related": ".pdb;.xml"
           }
         }
       },
-      "Grpc.Tools/2.48.0": {
+      "Grpc.Tools/2.59.0": {
         "type": "package",
         "build": {
           "build/Grpc.Tools.props": {},
           "build/Grpc.Tools.targets": {}
         }
       },
-      "Microsoft.Extensions.Logging.Abstractions/3.0.3": {
+      "Microsoft.Extensions.Logging.Abstractions/6.0.0": {
         "type": "package",
         "compile": {
-          "lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.dll": {
+          "lib/net6.0/Microsoft.Extensions.Logging.Abstractions.dll": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.dll": {
+          "lib/net6.0/Microsoft.Extensions.Logging.Abstractions.dll": {
             "related": ".xml"
           }
+        },
+        "build": {
+          "buildTransitive/netcoreapp3.1/_._": {}
         }
       },
       "System.Memory/4.5.3": {
@@ -151,14 +151,14 @@
     }
   },
   "libraries": {
-    "Google.Protobuf/3.21.5": {
-      "sha512": "d7zwRm0edg2cxqRynMD31F8HUUyicBT0l5M74EIsU6GAaq3dxxaZ/PpSPlso010W9nIXoVVKUYZSsiOspAOO/A==",
+    "Google.Protobuf/3.25.1": {
+      "sha512": "Sw9bq4hOD+AaS3RrnmP5IT25cyZ/T1qpM0e8+G+23Nojhv7+ScJFPEAQo1m4EFQWhXoI4FRZDrK+wjHCPw9yxg==",
       "type": "package",
-      "path": "google.protobuf/3.21.5",
+      "path": "google.protobuf/3.25.1",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "google.protobuf.3.21.5.nupkg.sha512",
+        "google.protobuf.3.25.1.nupkg.sha512",
         "google.protobuf.nuspec",
         "lib/net45/Google.Protobuf.dll",
         "lib/net45/Google.Protobuf.pdb",
@@ -174,16 +174,16 @@
         "lib/netstandard2.0/Google.Protobuf.xml"
       ]
     },
-    "Grpc.Core/2.46.5": {
-      "sha512": "bD35LTppXYmRvymX6rV+mqc2wZcZf8o0fYkEJ414cul1RiGRWTeVWOtDC94CaTGG2Ie/XoLTd347bnBB5vHaGQ==",
+    "Grpc.Core/2.46.6": {
+      "sha512": "ZoRg3KmOJ2urTF4+u3H0b1Yv10xzz2Y/flFWS2tnRmj8dbKLeiJaSRqu4LOBD3ova90evqLkVZ85kUkC4JT4lw==",
       "type": "package",
-      "path": "grpc.core/2.46.5",
+      "path": "grpc.core/2.46.6",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "build/net45/Grpc.Core.targets",
         "buildTransitive/net45/Grpc.Core.targets",
-        "grpc.core.2.46.5.nupkg.sha512",
+        "grpc.core.2.46.6.nupkg.sha512",
         "grpc.core.nuspec",
         "lib/net45/Grpc.Core.dll",
         "lib/net45/Grpc.Core.pdb",
@@ -202,22 +202,19 @@
         "runtimes/win-x86/native/grpc_csharp_ext.x86.dll"
       ]
     },
-    "Grpc.Core.Api/2.48.0": {
-      "sha512": "Kc9DrAVO3ao5jzI2IsItCZthJ1WCyvH8KE8N1cLRojmLvdCdOMT9R1doN47GuWPJQ1hH+dDPrxemB8Nv6Szn+w==",
+    "Grpc.Core.Api/2.59.0": {
+      "sha512": "n0QpwXqri/Uu7pXWbE6PWVANEhKggC6QRX7qsSR4vyzZRDN2jBPoUNvrJP7RBw7g8Dgg8e2bWYuGKq4ph6VXeA==",
       "type": "package",
-      "path": "grpc.core.api/2.48.0",
+      "path": "grpc.core.api/2.59.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "README.md",
-        "grpc.core.api.2.48.0.nupkg.sha512",
+        "grpc.core.api.2.59.0.nupkg.sha512",
         "grpc.core.api.nuspec",
         "lib/net462/Grpc.Core.Api.dll",
         "lib/net462/Grpc.Core.Api.pdb",
         "lib/net462/Grpc.Core.Api.xml",
-        "lib/netstandard1.5/Grpc.Core.Api.dll",
-        "lib/netstandard1.5/Grpc.Core.Api.pdb",
-        "lib/netstandard1.5/Grpc.Core.Api.xml",
         "lib/netstandard2.0/Grpc.Core.Api.dll",
         "lib/netstandard2.0/Grpc.Core.Api.pdb",
         "lib/netstandard2.0/Grpc.Core.Api.xml",
@@ -227,22 +224,28 @@
         "packageIcon.png"
       ]
     },
-    "Grpc.Net.Client/2.48.0": {
-      "sha512": "4QRComAnIYGGuqp05tw31g6LaKOJGkJ+bWzGVMEWKeFioj94TtgwCr7no4eRq9C+1sof+q9n9t5x57tvhkhE4g==",
+    "Grpc.Net.Client/2.59.0": {
+      "sha512": "I2CP5aLTek9mz7OwmM8T94pzvuV2Jib91KqzHh+vohazx/rL0ks1GCsUrwf+7866UsSsOznaWRKqFxWPEYstpg==",
       "type": "package",
-      "path": "grpc.net.client/2.48.0",
+      "path": "grpc.net.client/2.59.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "README.md",
-        "grpc.net.client.2.48.0.nupkg.sha512",
+        "grpc.net.client.2.59.0.nupkg.sha512",
         "grpc.net.client.nuspec",
-        "lib/net5.0/Grpc.Net.Client.dll",
-        "lib/net5.0/Grpc.Net.Client.pdb",
-        "lib/net5.0/Grpc.Net.Client.xml",
+        "lib/net462/Grpc.Net.Client.dll",
+        "lib/net462/Grpc.Net.Client.pdb",
+        "lib/net462/Grpc.Net.Client.xml",
         "lib/net6.0/Grpc.Net.Client.dll",
         "lib/net6.0/Grpc.Net.Client.pdb",
         "lib/net6.0/Grpc.Net.Client.xml",
+        "lib/net7.0/Grpc.Net.Client.dll",
+        "lib/net7.0/Grpc.Net.Client.pdb",
+        "lib/net7.0/Grpc.Net.Client.xml",
+        "lib/net8.0/Grpc.Net.Client.dll",
+        "lib/net8.0/Grpc.Net.Client.pdb",
+        "lib/net8.0/Grpc.Net.Client.xml",
         "lib/netstandard2.0/Grpc.Net.Client.dll",
         "lib/netstandard2.0/Grpc.Net.Client.pdb",
         "lib/netstandard2.0/Grpc.Net.Client.xml",
@@ -252,21 +255,24 @@
         "packageIcon.png"
       ]
     },
-    "Grpc.Net.Common/2.48.0": {
-      "sha512": "ju/jD0VR+cYdByLdaDc7toqAJxGzM0ba2rpQTbBrlHT+sRpCZAXUURZAlSszGAR7GLDXh4jm5n/KB6amT/xkVg==",
+    "Grpc.Net.Common/2.59.0": {
+      "sha512": "9j1wKAeCzjnx/j8CC8chXRoLCuzJ9VhhlhwMkbW37mS1Ox4vv0i2pcefpDY5INIeE1BmPNIuPtqFLOUktkiKrQ==",
       "type": "package",
-      "path": "grpc.net.common/2.48.0",
+      "path": "grpc.net.common/2.59.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "grpc.net.common.2.48.0.nupkg.sha512",
+        "grpc.net.common.2.59.0.nupkg.sha512",
         "grpc.net.common.nuspec",
-        "lib/net5.0/Grpc.Net.Common.dll",
-        "lib/net5.0/Grpc.Net.Common.pdb",
-        "lib/net5.0/Grpc.Net.Common.xml",
         "lib/net6.0/Grpc.Net.Common.dll",
         "lib/net6.0/Grpc.Net.Common.pdb",
         "lib/net6.0/Grpc.Net.Common.xml",
+        "lib/net7.0/Grpc.Net.Common.dll",
+        "lib/net7.0/Grpc.Net.Common.pdb",
+        "lib/net7.0/Grpc.Net.Common.xml",
+        "lib/net8.0/Grpc.Net.Common.dll",
+        "lib/net8.0/Grpc.Net.Common.pdb",
+        "lib/net8.0/Grpc.Net.Common.xml",
         "lib/netstandard2.0/Grpc.Net.Common.dll",
         "lib/netstandard2.0/Grpc.Net.Common.pdb",
         "lib/netstandard2.0/Grpc.Net.Common.xml",
@@ -276,14 +282,15 @@
         "packageIcon.png"
       ]
     },
-    "Grpc.Tools/2.48.0": {
-      "sha512": "53PFxisWVWweF/LNK/8T9NHQhCzHi9yjcYqk8vf/Mt7He+P8dVgaES6XeATW5WWWsIVNBaBZxxavRRMvjrLalQ==",
+    "Grpc.Tools/2.59.0": {
+      "sha512": "LzL71SCmx62zh6YMBOAEYxzK7LlhHYsBADnawyn8u3n/HL6qntZtGN2ep69T734zBQKWPBQVbVdiIaqaqOfhXg==",
       "type": "package",
-      "path": "grpc.tools/2.48.0",
+      "path": "grpc.tools/2.59.0",
       "hasTools": true,
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
+        "README.md",
         "build/Grpc.Tools.props",
         "build/Grpc.Tools.targets",
         "build/_grpc/Grpc.CSharp.xml",
@@ -296,7 +303,6 @@
         "build/_protobuf/net45/Protobuf.MSBuild.pdb",
         "build/_protobuf/netstandard1.3/Protobuf.MSBuild.dll",
         "build/_protobuf/netstandard1.3/Protobuf.MSBuild.pdb",
-        "build/native/Grpc.Tools.props",
         "build/native/include/google/protobuf/any.proto",
         "build/native/include/google/protobuf/api.proto",
         "build/native/include/google/protobuf/descriptor.proto",
@@ -308,7 +314,7 @@
         "build/native/include/google/protobuf/timestamp.proto",
         "build/native/include/google/protobuf/type.proto",
         "build/native/include/google/protobuf/wrappers.proto",
-        "grpc.tools.2.48.0.nupkg.sha512",
+        "grpc.tools.2.59.0.nupkg.sha512",
         "grpc.tools.nuspec",
         "packageIcon.png",
         "tools/linux_arm64/grpc_csharp_plugin",
@@ -325,18 +331,56 @@
         "tools/windows_x86/protoc.exe"
       ]
     },
-    "Microsoft.Extensions.Logging.Abstractions/3.0.3": {
-      "sha512": "m2Jyi/MEn043WMI1I6J1ALuCThktZ93rd7eqzYeLmMcA0bdZC+TBVl0LuEbEWM01dWeeBjOoagjNwQTzOi2r6A==",
+    "Microsoft.Extensions.Logging.Abstractions/6.0.0": {
+      "sha512": "/HggWBbTwy8TgebGSX5DBZ24ndhzi93sHUBDvP1IxbZD7FDokYzdAr6+vbWGjw2XAfR2EJ1sfKUotpjHnFWPxA==",
       "type": "package",
-      "path": "microsoft.extensions.logging.abstractions/3.0.3",
+      "path": "microsoft.extensions.logging.abstractions/6.0.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "Icon.png",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "analyzers/dotnet/roslyn3.11/cs/Microsoft.Extensions.Logging.Generators.dll",
+        "analyzers/dotnet/roslyn3.11/cs/cs/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn3.11/cs/de/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn3.11/cs/es/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn3.11/cs/fr/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn3.11/cs/it/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn3.11/cs/ja/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn3.11/cs/ko/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn3.11/cs/pl/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn3.11/cs/pt-BR/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn3.11/cs/ru/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn3.11/cs/tr/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn3.11/cs/zh-Hans/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn3.11/cs/zh-Hant/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/Microsoft.Extensions.Logging.Generators.dll",
+        "analyzers/dotnet/roslyn4.0/cs/cs/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/de/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/es/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/fr/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/it/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/ja/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/ko/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/pl/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/pt-BR/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/ru/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/tr/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/zh-Hans/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "analyzers/dotnet/roslyn4.0/cs/zh-Hant/Microsoft.Extensions.Logging.Generators.resources.dll",
+        "build/Microsoft.Extensions.Logging.Abstractions.targets",
+        "buildTransitive/netcoreapp2.0/Microsoft.Extensions.Logging.Abstractions.targets",
+        "buildTransitive/netcoreapp3.1/_._",
+        "lib/net461/Microsoft.Extensions.Logging.Abstractions.dll",
+        "lib/net461/Microsoft.Extensions.Logging.Abstractions.xml",
+        "lib/net6.0/Microsoft.Extensions.Logging.Abstractions.dll",
+        "lib/net6.0/Microsoft.Extensions.Logging.Abstractions.xml",
         "lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.dll",
         "lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.xml",
-        "microsoft.extensions.logging.abstractions.3.0.3.nupkg.sha512",
-        "microsoft.extensions.logging.abstractions.nuspec"
+        "microsoft.extensions.logging.abstractions.6.0.0.nupkg.sha512",
+        "microsoft.extensions.logging.abstractions.nuspec",
+        "useSharedDesignerContext.txt"
       ]
     },
     "System.Memory/4.5.3": {
@@ -395,10 +439,10 @@
   },
   "projectFileDependencyGroups": {
     "net9.0": [
-      "Google.Protobuf >= 3.21.5",
-      "Grpc.Core >= 2.46.5",
-      "Grpc.Net.Client >= 2.48.0",
-      "Grpc.Tools >= 2.48.0",
+      "Google.Protobuf >= 3.25.1",
+      "Grpc.Core >= 2.46.6",
+      "Grpc.Net.Client >= 2.59.0",
+      "Grpc.Tools >= 2.59.0",
       "System.Threading.Channels >= 8.0.0"
     ]
   },
@@ -447,21 +491,21 @@
         "dependencies": {
           "Google.Protobuf": {
             "target": "Package",
-            "version": "[3.21.5, )"
+            "version": "[3.25.1, )"
           },
           "Grpc.Core": {
             "target": "Package",
-            "version": "[2.46.5, )"
+            "version": "[2.46.6, )"
           },
           "Grpc.Net.Client": {
             "target": "Package",
-            "version": "[2.48.0, )"
+            "version": "[2.59.0, )"
           },
           "Grpc.Tools": {
             "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
             "suppressParent": "All",
             "target": "Package",
-            "version": "[2.48.0, )"
+            "version": "[2.59.0, )"
           },
           "System.Threading.Channels": {
             "target": "Package",

@@ -122,11 +122,17 @@ namespace MarketData.Server
                 oppositeSortedLevels = buy ? _asks : _bids;
                 sortedLevels = buy ? _bids : _asks;
 
+                // No levels to operate on
+                if (levels.Count == 0)
+                {
+                    return AddLevel(levels, oppositeSortedLevels, sortedLevels, buy, GetPrice(), GetQuantity());
+                }
+
                 var replace = levels.Count == instrument.Specifications.Depth;
                 var remove = random.NextDouble() < (levels.Count / (double)(instrument.Specifications.Depth + 1));
-                var index = random.Next(0, levels.Count - 1);
+                var index = levels.Count > 1 ? random.Next(0, levels.Count) : 0;
 
-                if (remove)
+                if (remove && levels.Count > 0)
                 {
                     return RemoveLevel(index, levels, sortedLevels);
                 }

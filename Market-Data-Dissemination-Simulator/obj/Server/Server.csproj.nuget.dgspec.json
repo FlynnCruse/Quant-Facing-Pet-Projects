@@ -46,21 +46,21 @@
           "dependencies": {
             "Google.Protobuf": {
               "target": "Package",
-              "version": "[3.21.5, )"
+              "version": "[3.25.1, )"
             },
             "Grpc.AspNetCore": {
               "target": "Package",
-              "version": "[2.48.0, )"
+              "version": "[2.59.0, )"
             },
             "Grpc.Core": {
               "target": "Package",
-              "version": "[2.46.5, )"
+              "version": "[2.46.6, )"
             },
             "Grpc.Tools": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[2.48.0, )"
+              "version": "[2.59.0, )"
             }
           },
           "imports": [
